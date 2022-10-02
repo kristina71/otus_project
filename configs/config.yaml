@@ -1,0 +1,16 @@
+logger:
+  level: info
+  file: ./rotation_logs.log
+db:
+  maxOpenConnections: 20
+  maxIdleConnections: 5
+  maxConnectionLifetime: 3m
+  dsn: "host=127.0.0.1 user=postgres password=password dbname=rotation sslmode=disable"
+server:
+  host: net-rotation
+  port: 50051
+  connectionTimeout: 5s
+publisher:
+  uri: "amqp://guest:guest@net-rabbit:5672/"
+  queueName: "banner-stats-queue"
+  exchangeName: "banner-stats-exchange"

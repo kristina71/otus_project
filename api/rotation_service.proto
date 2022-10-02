@@ -1,0 +1,127 @@
+syntax = "proto3";
+
+package banner_rotation;
+
+
+option go_package = ".;pb";
+
+// Слот - место на сайте, на котором мы показываем баннер.
+message Slot {
+    string id = 1;
+    string description = 2;
+}
+
+// Баннер - рекламный/информационный элемент, который показывается в слоте.
+message Banner {
+    string id = 1;
+    string description = 2;
+}
+
+// Соц-дем. группа - это группа пользователей сайта со схожими интересами, например "девушки 20-25" или "дедушки 80+".
+message Group {
+    string id = 1;
+    string description = 2;
+}
+
+message AddBannerToSlotRequest {
+    string banner_id = 1;
+    string slot_id = 2;
+}
+
+message AddBannerToSlotResponse {
+}
+
+message DeleteBannerFromSlotRequest {
+    string banner_id = 1;
+    string slot_id = 2;
+}
+
+message DeleteBannerFromSlotResponse {
+}
+
+message AddBannerRequest {
+    string description = 1;
+}
+
+message AddBannerResponse {
+    Banner banner = 1;
+}
+
+message DeleteBannerRequest {
+    string banner_id = 1;
+}
+
+message DeleteBannerResponse {
+
+}
+
+message AddSlotRequest {
+    string description = 1;
+}
+
+message AddSlotResponse {
+    Slot slot = 1;
+}
+
+message DeleteSlotRequest {
+    string slot_id = 1;
+}
+
+message DeleteSlotResponse {
+}
+
+message AddGroupRequest {
+    string description = 1;
+}
+
+message AddGroupResponse {
+    Group group = 1;
+}
+
+message DeleteGroupRequest {
+    string group_id = 1;
+}
+
+message DeleteGroupResponse {
+}
+
+message PersistClickRequest {
+    string slot_id = 1;
+    string group_id = 2;
+    string banner_id = 3;
+}
+
+message PersistClickResponse {
+
+}
+
+message NextBannerRequest {
+    string slot_id = 1;
+    string group_id = 2;
+}
+
+message NextBannerResponse {
+    string banner_id = 1;
+}
+
+
+service BannerRotationService {
+    // API for banners
+    rpc AddBannerToSlot(AddBannerToSlotRequest) returns (AddBannerToSlotResponse) {}
+    rpc DeleteBannerFromSlot(DeleteBannerFromSlotRequest) returns (DeleteBannerFromSlotResponse) {}
+    rpc AddBanner(AddBannerRequest) returns (AddBannerResponse) {}
+    rpc DeleteBanner(DeleteBannerRequest) returns (DeleteBannerResponse) {}
+
+
+    // API for slots
+    rpc AddSlot(AddSlotRequest) returns (AddSlotResponse) {}
+    rpc DeleteSlot(DeleteSlotRequest) returns (DeleteSlotResponse) {}
+
+    // API for groups
+    rpc AddGroup(AddGroupRequest) returns (AddGroupResponse) {}
+    rpc DeleteGroup(DeleteGroupRequest) returns (DeleteGroupResponse) {}
+
+    // API for rotation
+    rpc PersistClick(PersistClickRequest) returns (PersistClickResponse) {}
+    rpc NextBanner(NextBannerRequest) returns (NextBannerResponse) {}
+}

@@ -1,0 +1,97 @@
+version: '3.7'
+
+networks:
+  rotation-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.20.30.0/24"
+
+services:
+  postgres:
+    image: postgres
+    hostname: postgres
+    container_name: rotation-postgres
+    ports:
+      - '5432:5432'
+    expose:
+      - 5432
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: rotation
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ~/psqldata/rotation-pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      rotation-network:
+        ipv4_address: 10.20.30.10
+        aliases:
+          - db
+          - net-db
+
+  rabbit:
+    image: rabbitmq:3.9.4-management-alpine
+    hostname: rabbit
+    container_name: rotation-rabbit
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    expose:
+      - 5672
+      - 15672
+    restart: always
+    networks:
+      rotation-network:
+        ipv4_address: 10.20.30.20
+        aliases:
+          - rabbit
+          - net-rabbit
+
+  initializer:
+    build:
+      context: .
+      dockerfile: ./migrations/Dockerfile
+    container_name: rotation-migrations-init
+    depends_on:
+      - postgres
+      - rabbit
+    environment:
+      - WAIT_HOSTS=postgres:5432, rabbit:5672
+    networks:
+      rotation-network:
+        aliases:
+          - ini
+          - net-ini
+
+  banners-rotation:
+    build:
+      context: .
+      dockerfile: ./build/Dockerfile
+      args:
+        - CONFIG_PATH=./configs/config.yaml
+    container_name: rotation-app
+    depends_on:
+      - initializer
+      - postgres
+      - rabbit
+    ports:
+      - '50051:50051'
+    expose:
+      - 50051
+    environment:
+      - WAIT_HOSTS=postgres:5432, rabbit:5672
+    networks:
+      rotation-network:
+        ipv4_address: 10.20.30.30
+        aliases:
+          - rotation
+          - net-rotation
+
+
+
+
+
+
+
