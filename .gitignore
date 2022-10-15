@@ -13,3 +13,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+rotation_logs.log
+logs/
+bin/
+.idea
